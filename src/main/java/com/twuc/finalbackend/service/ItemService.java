@@ -2,6 +2,7 @@ package com.twuc.finalbackend.service;
 
 import com.twuc.finalbackend.models.dto.ItemDto;
 import com.twuc.finalbackend.models.dto.ItemListDto;
+import com.twuc.finalbackend.models.exception.ItemExistException;
 import com.twuc.finalbackend.models.po.ItemPo;
 import com.twuc.finalbackend.repository.ItemRepo;
 
@@ -31,6 +32,24 @@ public class ItemService {
             itemListDto.getData().add(itemDto);
         }
         return itemListDto;
+    }
 
+    public ItemDto addItem(ItemDto itemDto) throws ItemExistException {
+        checkItemExist(itemDto.getName());
+        ItemPo itemPo = ItemPo.builder()
+            .name(itemDto.getName())
+            .price(itemDto.getPrice())
+            .unit(itemDto.getUnit())
+            .imageUrl(itemDto.getImageUrl())
+            .build();
+        itemRepo.save(itemPo);
+        itemDto.setId(String.valueOf(itemPo.getId()));
+        return itemDto;
+    }
+
+    private void checkItemExist(String itemName) throws ItemExistException {
+        if (itemRepo.existsByName(itemName)) {
+            throw new ItemExistException("同名商品存在");
+        }
     }
 }

@@ -7,4 +7,9 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface ItemRepo extends PagingAndSortingRepository<ItemPo, Long> {
 
+    ItemPo findByName(String name);
+
+    boolean existsByName(String name);
+
+    void deleteByName(String name);
 }
