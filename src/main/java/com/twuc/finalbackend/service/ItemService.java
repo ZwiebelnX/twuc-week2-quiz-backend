@@ -3,12 +3,14 @@ package com.twuc.finalbackend.service;
 import com.twuc.finalbackend.models.dto.ItemDto;
 import com.twuc.finalbackend.models.dto.ItemListDto;
 import com.twuc.finalbackend.models.exception.ItemExistException;
+import com.twuc.finalbackend.models.exception.ItemNotExistException;
 import com.twuc.finalbackend.models.po.ItemPo;
 import com.twuc.finalbackend.repository.ItemRepo;
 
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 public class ItemService {
@@ -45,6 +47,14 @@ public class ItemService {
         itemRepo.save(itemPo);
         itemDto.setId(String.valueOf(itemPo.getId()));
         return itemDto;
+    }
+
+    public ItemPo getItemPo(long id) throws ItemNotExistException {
+        Optional<ItemPo> itemPo = itemRepo.findById(id);
+        if (!itemPo.isPresent()) {
+            throw new ItemNotExistException("商品不存在");
+        }
+        return itemPo.get();
     }
 
     private void checkItemExist(String itemName) throws ItemExistException {
