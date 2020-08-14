@@ -74,4 +74,23 @@ public class CartControllerTest {
         assertEquals(2, cartRepo.findByItemPo(itemPo).getQuantity());
     }
 
+    @Test
+    public void should_get_cart_list_when_get_cart() throws Exception {
+        ItemPo itemPo = itemRepo.findById((long)1).get();
+        cartRepo.deleteByItemPo(itemPo);
+        PostCartDto postCartDto = PostCartDto.builder().id("1").build();
+        mockMvc.perform(post("/cart").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(postCartDto)))
+            .andExpect(status().isOk());
+        mockMvc.perform(post("/cart").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(postCartDto)))
+            .andExpect(status().isOk());
+        itemPo = itemRepo.findById((long)2).get();
+        cartRepo.deleteByItemPo(itemPo);
+        mockMvc.perform(post("/cart").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(postCartDto)))
+            .andExpect(status().isOk());
+        mockMvc.perform(get("/cart")).andExpect(status().isOk())
+            .andExpect(jsonPath("$.data[0].quantity").value(2))
+            .andExpect(jsonPath("$.data[1].quantity").value(1));
+    }
+
+
 }
