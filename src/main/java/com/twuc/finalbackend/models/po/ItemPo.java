@@ -1,9 +1,11 @@
 package com.twuc.finalbackend.models.po;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -40,4 +42,7 @@ public class ItemPo {
 
     @Column(name = "image_url", length = 255)
     private String imageUrl;
+
+    @OneToOne(cascade = CascadeType.REMOVE, mappedBy = "itemPo")
+    private CartPo cartPo;
 }
