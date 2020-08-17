@@ -1,5 +1,7 @@
 package com.twuc.finalbackend.service;
 
+import com.twuc.finalbackend.models.dto.CartItemDto;
+import com.twuc.finalbackend.models.dto.CartListDto;
 import com.twuc.finalbackend.models.dto.PostCartDto;
 import com.twuc.finalbackend.models.exception.ItemNotExistException;
 import com.twuc.finalbackend.models.po.CartPo;
@@ -7,6 +9,8 @@ import com.twuc.finalbackend.models.po.ItemPo;
 import com.twuc.finalbackend.repository.CartRepo;
 
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 
 @Service
 public class CartService {
@@ -29,5 +33,19 @@ public class CartService {
             cartPo.setQuantity(cartPo.getQuantity() + 1);
         }
         cartRepo.save(cartPo);
+    }
+
+    public CartListDto getCartItemList() {
+        CartListDto cartListDto = CartListDto.builder().totalPage(1).data(new ArrayList<>()).build();
+        for (CartPo cartPo : cartRepo.findAll()) {
+            CartItemDto cartItemDto = CartItemDto.builder()
+                .name(cartPo.getItemPo().getName())
+                .price(cartPo.getItemPo().getPrice())
+                .unit(cartPo.getItemPo().getUnit())
+                .quantity(cartPo.getQuantity())
+                .build();
+            cartListDto.getData().add(cartItemDto);
+        }
+        return cartListDto;
     }
 }

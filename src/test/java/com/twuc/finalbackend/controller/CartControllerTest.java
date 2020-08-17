@@ -75,6 +75,7 @@ public class CartControllerTest {
     }
 
     @Test
+    @Transactional
     public void should_get_cart_list_when_get_cart() throws Exception {
         ItemPo itemPo = itemRepo.findById((long)1).get();
         cartRepo.deleteByItemPo(itemPo);
@@ -85,6 +86,7 @@ public class CartControllerTest {
             .andExpect(status().isOk());
         itemPo = itemRepo.findById((long)2).get();
         cartRepo.deleteByItemPo(itemPo);
+        postCartDto = PostCartDto.builder().id("2").build();
         mockMvc.perform(post("/cart").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(postCartDto)))
             .andExpect(status().isOk());
         mockMvc.perform(get("/cart")).andExpect(status().isOk())
