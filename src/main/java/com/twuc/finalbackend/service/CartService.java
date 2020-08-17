@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+import javax.transaction.Transactional;
+
 @Service
 public class CartService {
 
@@ -39,6 +41,7 @@ public class CartService {
         CartListDto cartListDto = CartListDto.builder().totalPage(1).data(new ArrayList<>()).build();
         for (CartPo cartPo : cartRepo.findAll()) {
             CartItemDto cartItemDto = CartItemDto.builder()
+                .itemId(String.valueOf(cartPo.getItemPo().getId()))
                 .name(cartPo.getItemPo().getName())
                 .price(cartPo.getItemPo().getPrice())
                 .unit(cartPo.getItemPo().getUnit())
@@ -47,5 +50,10 @@ public class CartService {
             cartListDto.getData().add(cartItemDto);
         }
         return cartListDto;
+    }
+
+    public void deleteItem(PostCartDto postCartDto) throws ItemNotExistException {
+        ItemPo itemPo = itemService.getItemPo(Long.parseLong(postCartDto.getId()));
+        cartRepo.deleteByItemPo(itemPo);
     }
 }

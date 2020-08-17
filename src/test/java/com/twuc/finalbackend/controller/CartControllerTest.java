@@ -94,5 +94,23 @@ public class CartControllerTest {
             .andExpect(jsonPath("$.data[1].quantity").value(1));
     }
 
+    @Test
+    @Transactional
+    public void should_delete_cart_item_when_delete_cart() throws Exception {
+        cartRepo.deleteAll();
+        PostCartDto postCartDto = PostCartDto.builder().id("1").build();
+        mockMvc.perform(post("/cart").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(postCartDto)))
+            .andExpect(status().isOk());
+        mockMvc.perform(post("/cart").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(postCartDto)))
+            .andExpect(status().isOk());
+        postCartDto = PostCartDto.builder().id("2").build();
+        mockMvc.perform(post("/cart").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(postCartDto)))
+            .andExpect(status().isOk());
+
+        mockMvc.perform(delete("/cart").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(postCartDto)))
+            .andExpect(status().isOk());
+        mockMvc.perform(get("/cart")).andExpect(status().isOk()).andExpect(jsonPath("$.data", hasSize(1)));
+    }
+
 
 }
