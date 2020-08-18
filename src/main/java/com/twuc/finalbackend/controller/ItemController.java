@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 public class ItemController {
     private final ItemService itemService;
@@ -25,7 +27,7 @@ public class ItemController {
     }
 
     @PostMapping("/item")
-    public ResponseEntity<ItemDto> addItem(@RequestBody ItemDto itemDto) throws ItemExistException {
+    public ResponseEntity<ItemDto> addItem(@Valid @RequestBody ItemDto itemDto) throws ItemExistException {
         return ResponseEntity.ok(itemService.addItem(itemDto));
     }
 }

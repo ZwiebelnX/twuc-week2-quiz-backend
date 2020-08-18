@@ -77,6 +77,23 @@ public class ItemControllerTest {
     }
 
     @Test
+    @Transactional
+    public void should_throw_error_when_post_item_given_wrong_item_info() throws Exception {
+        ItemDto itemDto = ItemDto.builder()
+            .name("测试洋葱")
+            .price(-1)
+            .unit("头")
+            .imageUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&se" +
+                "c=1597404506561&di=6a64ba2bfedc2f5ee3a75c937ddfd331&imgtype=0&src=http%3A%2" +
+                "F%2Fimg4.imgtn.bdimg.com%2Fit%2Fu%3D1126039374%2C2932139796%26fm%3D214%26gp%3D0.jpg")
+            .build();
+        itemRepo.deleteByName("测试洋葱");
+        mockMvc.perform(post("/item")
+            .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(itemDto)))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void should_throw_error_when_post_item_given_error_info() throws Exception {
         ItemDto itemDto = ItemDto.builder()
             .name("测试洋葱")
